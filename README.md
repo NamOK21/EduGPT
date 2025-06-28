@@ -1,6 +1,6 @@
 # 🎓 EduGPT – Trợ lý giáo dục thông minh
 
-**EduGPT** là một hệ thống hỏi đáp AI chuyên biệt dành cho lĩnh vực giáo dục Việt Nam, cho phép truy xuất chính xác nội dung từ các văn bản pháp luật, chương trình học, quy chế thi,... hoàn toàn **offline**, dễ sử dụng và dễ tùy biến.
+**EduGPT** là một hệ thống hỏi đáp AI được tối ưu chuyên biệt để hỗ trợ trong lĩnh vực giáo dục tại Việt Nam, cho phép truy xuất chính xác nội dung từ các văn bản pháp luật, chương trình học, quy chế thi,... hoàn toàn **offline**, bảo mật tuyệt đối (**cái này hên xui**) và dễ dàng sử dụng.
 
 ---
 
