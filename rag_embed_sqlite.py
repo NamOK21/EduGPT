@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS chunks (
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
-def split_text(text, max_tokens=300):
+def split_text(text, max_tokens=500):
     sentences = re.split(r'(?<=[.!?])\s+', text)
     chunks = []
     current = ""
@@ -58,4 +58,4 @@ for filename in os.listdir("data"):
 
 conn.commit()
 conn.close()
-print("✅ Đã nhúng và lưu CSDL (đã loại bỏ \n).")
+print("✅ Đã nhúng và lưu CSDL (đã loại bỏ ký tự thừa).")

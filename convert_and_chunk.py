@@ -6,7 +6,7 @@ from docx import Document
 from PyPDF2 import PdfReader
 
 # Hàm chia văn bản thành các đoạn nhỏ (~1000 ký tự)
-def chunk_text(text, max_chars=1000):
+def chunk_text(text, max_chars=500):
     paragraphs = re.split(r'\n{2,}', text)
     chunks = []
     buffer = ""
@@ -23,18 +23,18 @@ def chunk_text(text, max_chars=1000):
         chunks.append(buffer.strip())
     return chunks
 
-# Trích xuất văn bản từ PDF (chỉ hỗ trợ văn bản gốc, không phải ảnh scan)
+
 def process_pdf(file_path):
     reader = PdfReader(file_path)
     full_text = "\n".join([page.extract_text() for page in reader.pages if page.extract_text()])
     return full_text
 
-# Trích xuất văn bản từ DOCX
+
 def process_docx(file_path):
     doc = Document(file_path)
     return "\n".join([para.text.strip() for para in doc.paragraphs if para.text.strip()])
 
-# Hàm chính: chuyển đổi và chunk văn bản
+
 def convert_and_chunk(file_path, output_dir="data", max_chars=1000):
     Path(output_dir).mkdir(parents=True, exist_ok=True)
     ext = Path(file_path).suffix.lower()
