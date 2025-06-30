@@ -1,7 +1,19 @@
-# Python bytecode
+# ========== Python-related ==========
+
+# Bytecode và cache
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Cython build
+*.c
+*.cpp
+*.pyx
+*.pyd
+
+# Thư viện cài bằng pip (Windows)
+authen/Lib/
+authen/Lib/site-packages/
 
 # Virtual environments
 venv/
@@ -9,47 +21,55 @@ env/
 ENV/
 .venv/
 .VENV/
-authen/Lib/
 
-# IDE and system files
+# ========== IDE & Hệ điều hành ==========
+
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
 
-# Logs and temp files
+# ========== Output & build ==========
+
+dist/
+build/
+*.egg-info/
+
+# ========== Tập tin tạm và log ==========
+
 *.log
 *.tmp
 *.swp
 
-# Jupyter checkpoints
+# ========== Notebook checkpoint ==========
+
 .ipynb_checkpoints/
 
-# Binaries and large files
+# ========== Binaries lớn ==========
+
 *.dll
 *.lib
 *.exe
 *.bin
 *.iso
-*.pt
-*.pth
-*.h5
-*.ckpt
-
-# Compiled extensions
 *.so
 
-# Output folders
-dist/
-build/
-*.egg-info/
+# ========== Mô hình và dữ liệu AI ==========
 
-# Environment variables
-.env
+*.pt
+*.pth
+*.ckpt
+*.h5
 
-# Ignore database files in db/
+# ========== SQLite database ==========
+
 db/*.db
 db/*.sqlite
 
-# Git LFS (if not using)
+# ========== Env file ==========
+
+.env
+
+# ========== Git LFS (nếu không dùng) ==========
+
 .gitattributes
