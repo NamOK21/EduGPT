@@ -1,5 +1,55 @@
-db/*.db
-db/*.sqlite
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.VENV/
 authen/Lib/
+
+# IDE and system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Binaries and large files
 *.dll
 *.lib
+*.exe
+*.bin
+*.iso
+*.pt
+*.pth
+*.h5
+*.ckpt
+
+# Compiled extensions
+*.so
+
+# Output folders
+dist/
+build/
+*.egg-info/
+
+# Environment variables
+.env
+
+# Ignore database files in db/
+db/*.db
+db/*.sqlite
+
+# Git LFS (if not using)
+.gitattributes
