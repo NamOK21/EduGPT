@@ -11,9 +11,7 @@ __pycache__/
 *.pyx
 *.pyd
 
-# Thư viện cài bằng pip (Windows)
-authen/Lib/
-authen/Lib/site-packages/
+authen/Lib/site-packages
 
 # Virtual environments
 venv/
