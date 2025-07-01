@@ -1,73 +1,72 @@
-# ========== Python-related ==========
-
-# Bytecode và cache
+# ===== Python bytecode & cache =====
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Cython build
-*.c
-*.cpp
-*.pyx
-*.pyd
-
-authen/Lib/site-packages
-
-# Virtual environments
+# ===== Virtual Environments =====
 venv/
 env/
 ENV/
 .venv/
 .VENV/
 
-# ========== IDE & Hệ điều hành ==========
+# Windows venv site-packages (trường hợp cụ thể của bạn)
+authen/Lib/
+authen/Lib/site-packages/
 
-.vscode/
-.idea/
-.DS_Store
-Thumbs.db
-
-# ========== Output & build ==========
-
+# ===== Package installs =====
+*.egg-info/
+*.eggs/
 dist/
 build/
-*.egg-info/
 
-# ========== Tập tin tạm và log ==========
+# ===== Jupyter Notebook checkpoints =====
+.ipynb_checkpoints/
 
+# ===== Logs, temp, swap files =====
 *.log
 *.tmp
 *.swp
 
-# ========== Notebook checkpoint ==========
+# ===== System/IDE files =====
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
 
-.ipynb_checkpoints/
+# ===== Secrets & Environment Variables =====
+.env
+.env.*
 
-# ========== Binaries lớn ==========
-
+# ===== Compiled binary extensions =====
+*.so
+*.pyd
 *.dll
 *.lib
+*.a
+*.o
+*.obj
 *.exe
 *.bin
 *.iso
-*.so
 
-# ========== Mô hình và dữ liệu AI ==========
-
+# ===== AI/ML model files =====
 *.pt
 *.pth
-*.ckpt
 *.h5
+*.ckpt
+*.tflite
+*.onnx
 
-# ========== SQLite database ==========
-
+# ===== SQLite database files =====
 db/*.db
 db/*.sqlite
 
-# ========== Env file ==========
+# ===== Others =====
+*.bak
+*.old
+*.orig
 
-.env
-
-# ========== Git LFS (nếu không dùng) ==========
-
-.gitattributes
+# Optional: keep empty folders
+!db/.gitkeep
+!data/.gitkeep
