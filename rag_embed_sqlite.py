@@ -6,11 +6,11 @@ from sentence_transformers import SentenceTransformer
 import os
 import re
 
-# Kết nối CSDL
+# Connect to SQLite database
 conn = sqlite3.connect("db/vectors.db")
 cur = conn.cursor()
 
-# Tạo bảng nếu chưa có
+# Create table if not exists
 cur.execute("""
 CREATE TABLE IF NOT EXISTS chunks (
     id INTEGER PRIMARY KEY,
@@ -39,7 +39,7 @@ def split_text(text, max_tokens=500):
 
     return chunks
 
-# Duyệt các file JSON trong thư mục data/
+# Traverse JSON files in data/ directory
 for filename in os.listdir("data"):
     if filename.endswith(".json"):
         with open(os.path.join("data", filename), encoding="utf-8") as f:

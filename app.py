@@ -5,16 +5,16 @@ import requests
 import os
 
 app = Flask(__name__)
-CORS(app)  # ✅ Cho phép React frontend truy cập từ domain khác
+CORS(app)  # Allowing React frontend to access from different domain
 
-# URL tới local LM Studio API
+# URL to local LM Studio API
 LM_API_URL = os.getenv("LM_API_URL", "http://127.0.0.1:1234/v1/chat/completions")
 
-# === 🧠 Gửi prompt tới LM Studio ===
+# Send prompt to LM Studio
 def query_lmstudio(prompt):
     headers = {"Content-Type": "application/json"}
     payload = {
-        "model": "llama-3.2-3b-instruct",  # hoặc bất kỳ model nào bạn đang dùng
+        "model": "llama-3.2-3b-instruct",  # Can be changed to different models
         "messages": [
             {"role": "system", "content": "Bạn là trợ lý giáo dục thông minh, chỉ trả lời theo tài liệu."},
             {"role": "user", "content": prompt}
@@ -30,7 +30,7 @@ def query_lmstudio(prompt):
     except Exception as e:
         return f"❌ Lỗi từ LM Studio: {e}"
 
-# === 📤 API nhận câu hỏi từ React ===
+# API receives question from React frontend
 @app.route("/ask", methods=["POST"])
 def ask():
     data = request.get_json()
@@ -47,6 +47,6 @@ def ask():
     answer = query_lmstudio(prompt)
     return jsonify({"answer": answer})
 
-# === ✅ Ready
+# Ready
 if __name__ == "__main__":
     app.run(port=5678, debug=True)

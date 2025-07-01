@@ -5,7 +5,7 @@ from pathlib import Path
 from docx import Document
 from PyPDF2 import PdfReader
 
-# Hàm chia văn bản thành các đoạn nhỏ (~1000 ký tự)
+# Divide text into small chunks (~1000 characters)
 def chunk_text(text, max_chars=500):
     paragraphs = re.split(r'\n{2,}', text)
     chunks = []
