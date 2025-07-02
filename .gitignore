@@ -10,9 +10,13 @@ ENV/
 .venv/
 .VENV/
 
-# Windows venv site-packages (trường hợp cụ thể của bạn)
+# Windows venv site-packages 
 authen/Lib/
 authen/Lib/site-packages/
+
+# Data 
+data/**
+
 
 # ===== Package installs =====
 *.egg-info/

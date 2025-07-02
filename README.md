@@ -6,8 +6,11 @@
 
 ## 🧠 Mục tiêu
 
-- Trả lời câu hỏi chính xác theo văn bản quy định như Thông tư, Luật Giáo dục, chương trình môn học, v.v.
-- Hỗ trợ **nhiều cấp học** và **môn học**, tự động lọc theo ngữ cảnh
-- Không suy diễn ngoài dữ liệu gốc đã cung cấp
+- Trả lời câu hỏi chính xác theo văn bản quy định như Thông tư, Luật Giáo dục, chương trình môn học, v.v...
+- Hỗ trợ **nhiều cấp học** và **môn học**, tự động lọc theo ngữ cảnh.
+- Không suy diễn ngoài dữ liệu gốc đã cung cấp.
 
 ---
+
+### Lưu ý:
+- Khi clone repo về, tạo thêm thư mục data để lưu các file json đã được xử lý.
