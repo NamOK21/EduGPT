@@ -1,8 +1,10 @@
+// =========================================
+// IMPORT VÀ HẰNG SỐ
+// =========================================
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import ChatUI from "./ChatUI";
 import "./App.css";
-
 
 const LOCAL_KEY = "edu-chat-history";
 const SUGGESTED_QUESTIONS = [
@@ -18,40 +20,61 @@ const SUGGESTED_QUESTIONS = [
   "Nội dung giáo dục của địa phương được dạy như thế nào?",
 ];
 
+// =========================================
+// COMPONENT CHÍNH APP
+// =========================================
 function App() {
+  // =========================================
+  // STATE VÀ BIẾN
+  // =========================================
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [botTyping, setBotTyping] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState("");
+  const [uploadStatus, setUploadStatus] = useState({ total: 0, successCount: 0, errors: [] });
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const chatBoxRef = useRef(null);
 
+  // =========================================
+  // KHÔI PHỤC VÀ LƯU LỊCH SỬ
+  // =========================================
   useEffect(() => {
     const stored = localStorage.getItem(LOCAL_KEY);
-    if (stored) setMessages(JSON.parse(stored));
+    if (stored) {
+      try {
+        setMessages(JSON.parse(stored));
+      } catch (e) {
+        console.error("❌ Lỗi đọc lịch sử:", e);
+      }
+    }
     setSuggestions([...SUGGESTED_QUESTIONS].sort(() => 0.5 - Math.random()).slice(0, 6));
   }, []);
 
   useEffect(() => {
-    chatBoxRef.current?.scrollTo(0, chatBoxRef.current.scrollHeight);
     localStorage.setItem(LOCAL_KEY, JSON.stringify(messages));
+    chatBoxRef.current?.scrollTo(0, chatBoxRef.current.scrollHeight);
   }, [messages]);
 
   useEffect(() => {
     document.body.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
+  // =========================================
+  // XỬ LÝ GỬI TIN NHẮN
+  // =========================================
   const handleSend = async (customInput) => {
     const trimmed = (customInput ?? input).trim();
     if (!trimmed) return;
+
     const userMessage = {
       role: "user",
       content: trimmed,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
+
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setLoading(true);
@@ -63,9 +86,13 @@ function App() {
     } catch {
       simulateTyping("❌ Lỗi kết nối đến máy chủ.");
     }
+
     setLoading(false);
   };
 
+  // =========================================
+  // GIẢ LẬP GÕ TỪNG CHỮ
+  // =========================================
   const simulateTyping = (text) => {
     let i = 0;
     const interval = setInterval(() => {
@@ -73,18 +100,22 @@ function App() {
       setBotTyping(text.slice(0, i));
       if (i >= text.length) {
         clearInterval(interval);
-        setMessages((prev) => [...prev, 
+        setMessages((prev) => [
+          ...prev,
           {
             role: "assistant",
             content: text,
-            timestamp: new Date().toISOString()
-          }
+            timestamp: new Date().toISOString(),
+          },
         ]);
         setBotTyping("");
       }
     }, 15);
   };
 
+  // =========================================
+  // XỬ LÝ PHÍM ENTER
+  // =========================================
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -92,29 +123,64 @@ function App() {
     }
   };
 
+  // =========================================
+  // XỬ LÝ CHỌN FILE
+  // =========================================
   const handleFileChange = (e) => {
     setSelectedFiles([...e.target.files]);
-    setUploadStatus("");
+    setUploadStatus({ total: 0, successCount: 0, errors: [] });
   };
 
+  // =========================================
+  // XỬ LÝ UPLOAD FILE
+  // =========================================
   const handleUploadConfirm = async () => {
     if (selectedFiles.length === 0) return;
-    setUploadStatus("⏳ Đang xử lý các file...");
-    for (let file of selectedFiles) {
+    setUploadStatus({ total: selectedFiles.length, successCount: 0, errors: [] });
+    setUploadProgress(1);
+
+    let successCount = 0;
+    let errors = [];
+
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const file = selectedFiles[i];
       const formData = new FormData();
       formData.append("file", file);
+
       try {
-        const res = await axios.post("http://localhost:5678/upload", formData, {
+        await axios.post("http://localhost:5678/upload", formData, {
           headers: { "Content-Type": "multipart/form-data" },
+          onUploadProgress: (e) => {
+            const percent = Math.round(((i + e.loaded / e.total) / selectedFiles.length) * 100);
+            setUploadProgress(percent);
+          },
         });
-        setUploadStatus((prev) => prev + `\n📄 ${file.name}: ${res.data.message}`);
+        successCount++;
       } catch {
-        setUploadStatus((prev) => prev + `\n❌ ${file.name}: Lỗi xử lý.`);
+        errors.push(file.name);
       }
+
+      setUploadStatus({ total: selectedFiles.length, successCount, errors });
     }
+
+    setUploadProgress(100);
+    setTimeout(() => setUploadProgress(0), 1500);
     setSelectedFiles([]);
   };
 
+  // =========================================
+  // XÓA LỊCH SỬ CHAT
+  // =========================================
+  const handleClearHistory = () => {
+    if (window.confirm("Bạn có chắc muốn xoá toàn bộ lịch sử trò chuyện?")) {
+      setMessages([]);
+      localStorage.removeItem(LOCAL_KEY);
+    }
+  };
+
+  // =========================================
+  // RENDER UI
+  // =========================================
   return (
     <ChatUI
       messages={messages}
@@ -132,6 +198,8 @@ function App() {
       handleFileChange={handleFileChange}
       handleUploadConfirm={handleUploadConfirm}
       uploadStatus={uploadStatus}
+      uploadProgress={uploadProgress}
+      handleClearHistory={handleClearHistory}
     />
   );
 }

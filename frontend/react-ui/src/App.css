@@ -327,6 +327,21 @@ body.dark .custom-upload:hover, body.dark .custom-upload:focus {
   font-weight: 500;
 }
 
+.clear-btn {
+  background: #e74c3c;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  margin-right: 0.5rem;
+}
+
+.clear-btn:hover {
+  background: #c0392b;
+}
+
 /* Mobile Responsive */
 @media screen and (max-width: 600px) {
   .chat-box {

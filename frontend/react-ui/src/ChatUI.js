@@ -1,6 +1,12 @@
+// =========================================
+// IMPORT
+// =========================================
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// =========================================
+// COMPONENT CHÍNH CHATUI
+// =========================================
 function ChatUI({
   messages,
   loading,
@@ -18,17 +24,29 @@ function ChatUI({
   handleUploadConfirm,
   uploadStatus,
   uploadProgress,
+  handleClearHistory,
 }) {
   return (
     <>
+      // =========================================
+      // HEADER
+      // =========================================
       <div className="app-container">
         <header className="header">
           <h1>🎓 Trợ lý giáo dục</h1>
-          <button className="theme-toggle" onClick={toggleDarkMode}>
-            {darkMode ? "🌞 Sáng" : "🌙 Tối"}
-          </button>
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <button className="theme-toggle" onClick={toggleDarkMode}>
+              {darkMode ? "🌞 Sáng" : "🌙 Tối"}
+            </button>
+            <button className="clear-history-btn" onClick={handleClearHistory}>
+              🗑️ Xoá lịch sử
+            </button>
+          </div>
         </header>
 
+        // =========================================
+        // KHUNG CHAT
+        // =========================================
         <div className="chat-box" ref={chatBoxRef}>
           <AnimatePresence initial={false}>
             {messages.map((msg, i) => {
@@ -77,6 +95,9 @@ function ChatUI({
           </AnimatePresence>
         </div>
 
+        // =========================================
+        // INPUT CHAT
+        // =========================================
         <div className="input-area">
           <textarea
             placeholder="Nhập câu hỏi..."
@@ -88,6 +109,9 @@ function ChatUI({
           <button onClick={() => handleSend()} disabled={loading}>📤 Gửi</button>
         </div>
 
+        // =========================================
+        // GỢI Ý CÂU HỎI
+        // =========================================
         <div className="suggested-container">
           <h3>💡 Câu hỏi gợi ý:</h3>
           <div className="suggested-grid">
@@ -106,11 +130,14 @@ function ChatUI({
           </div>
         </div>
 
+        // =========================================
+        // UPLOAD FILE
+        // =========================================
         <div className="upload-box">
           <h3>📎 Tải lên nhiều file (.pdf, .docx):</h3>
           <label className="custom-upload">
             + Chọn file
-            <input type="file" accept=".pdf,.docx" multiple onChange={handleFileChange} disabled={loading} hidden />
+            <input type="file" accept=".pdf,.docx,.lsty" multiple onChange={handleFileChange} disabled={loading} hidden />
           </label>
 
           {selectedFiles.length > 0 && (
@@ -142,6 +169,9 @@ function ChatUI({
         </div>
       </div>
 
+      // =========================================
+      // FOOTER
+      // =========================================
       <footer className="footer">
         <img src="/assets/sfb-logo.png" alt="SFB Logo" className="footer-logo" />
         <span>© {new Date().getFullYear()} EduGPT by SFB Technology. All rights reserved.</span>
