@@ -182,25 +182,30 @@ function App() {
   // RENDER UI
   // =========================================
   return (
-    <ChatUI
-      messages={messages}
-      loading={loading}
-      botTyping={botTyping}
-      chatBoxRef={chatBoxRef}
-      input={input}
-      setInput={setInput}
-      handleSend={handleSend}
-      handleKeyDown={handleKeyDown}
-      suggestions={suggestions}
-      darkMode={darkMode}
-      toggleDarkMode={() => setDarkMode(!darkMode)}
-      selectedFiles={selectedFiles}
-      handleFileChange={handleFileChange}
-      handleUploadConfirm={handleUploadConfirm}
-      uploadStatus={uploadStatus}
-      uploadProgress={uploadProgress}
-      handleClearHistory={handleClearHistory}
-    />
+    <>
+      {/* ========================================= */}
+      {/* RENDER UI - Giao diện chính */}
+      {/* ========================================= */}
+      <ChatUI
+        messages={messages}
+        loading={loading}
+        botTyping={botTyping}
+        chatBoxRef={chatBoxRef}
+        input={input}
+        setInput={setInput}
+        handleSend={handleSend}
+        handleKeyDown={handleKeyDown}
+        suggestions={suggestions}
+        darkMode={darkMode}
+        toggleDarkMode={() => setDarkMode(!darkMode)}
+        selectedFiles={selectedFiles}
+        handleFileChange={handleFileChange}
+        handleUploadConfirm={handleUploadConfirm}
+        uploadStatus={uploadStatus}
+        uploadProgress={uploadProgress}
+        handleClearHistory={handleClearHistory}
+      />
+    </>
   );
 }
 

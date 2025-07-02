@@ -28,9 +28,9 @@ function ChatUI({
 }) {
   return (
     <>
-      // =========================================
-      // HEADER
-      // =========================================
+      {/* ========================================= */}
+      {/* HEADER */}
+      {/* ========================================= */}
       <div className="app-container">
         <header className="header">
           <h1>🎓 Trợ lý giáo dục</h1>
@@ -44,9 +44,9 @@ function ChatUI({
           </div>
         </header>
 
-        // =========================================
-        // KHUNG CHAT
-        // =========================================
+        {/* ========================================= */}
+        {/* KHUNG CHAT */}
+        {/* ========================================= */}
         <div className="chat-box" ref={chatBoxRef}>
           <AnimatePresence initial={false}>
             {messages.map((msg, i) => {
@@ -95,9 +95,9 @@ function ChatUI({
           </AnimatePresence>
         </div>
 
-        // =========================================
-        // INPUT CHAT
-        // =========================================
+        {/* ========================================= */}
+        {/* INPUT CHAT */}
+        {/* ========================================= */}
         <div className="input-area">
           <textarea
             placeholder="Nhập câu hỏi..."
@@ -109,9 +109,9 @@ function ChatUI({
           <button onClick={() => handleSend()} disabled={loading}>📤 Gửi</button>
         </div>
 
-        // =========================================
-        // GỢI Ý CÂU HỎI
-        // =========================================
+        {/* ========================================= */}
+        {/* GỢI Ý CÂU HỎI */}
+        {/* ========================================= */}
         <div className="suggested-container">
           <h3>💡 Câu hỏi gợi ý:</h3>
           <div className="suggested-grid">
@@ -130,9 +130,9 @@ function ChatUI({
           </div>
         </div>
 
-        // =========================================
-        // UPLOAD FILE
-        // =========================================
+        {/* ========================================= */}
+        {/* UPLOAD FILE */}
+        {/* ========================================= */}
         <div className="upload-box">
           <h3>📎 Tải lên nhiều file (.pdf, .docx):</h3>
           <label className="custom-upload">
@@ -169,9 +169,9 @@ function ChatUI({
         </div>
       </div>
 
-      // =========================================
-      // FOOTER
-      // =========================================
+      {/* ========================================= */}
+      {/* FOOTER */}
+      {/* ========================================= */}
       <footer className="footer">
         <img src="/assets/sfb-logo.png" alt="SFB Logo" className="footer-logo" />
         <span>© {new Date().getFullYear()} EduGPT by SFB Technology. All rights reserved.</span>
