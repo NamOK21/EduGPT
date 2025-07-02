@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
 
 :root {
-  /* Light theme (mặc định) */
   --bg-color: #f8f9fa;
   --primary: #4D9DE0;
   --secondary: #80CED7;
@@ -13,7 +12,6 @@
   --suggested-color: #006064;
 }
 
-/* Dark theme overrides */
 body.dark {
   --bg-color: #1d1e20;
   --primary: #80CED7;
@@ -86,27 +84,49 @@ body.dark .chat-box {
   align-items: flex-start;
 }
 
+.chat-message.user {
+  flex-direction: row-reverse;
+}
+
+.avatar-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 0.5rem;
+}
+
+.bubble-group {
+  max-width: 80%;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-content {
+  background-color: var(--bot-bubble);
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  word-wrap: break-word;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
 .chat-message.user .message-content {
   background-color: var(--user-bubble);
   color: var(--text-color);
 }
 
-.chat-message.assistant .message-content {
-  background-color: var(--bot-bubble);
-  color: var(--text-color);
+.message-meta {
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 0.2rem;
+  padding-left: 0.3rem;
 }
 
-.message-content {
-  padding: 0.75rem;
-  border-radius: 8px;
-  max-width: 80%;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  word-wrap: break-word;
-}
-
-.avatar {
-  font-size: 1.5rem;
+.typing {
+  font-style: italic;
+  opacity: 0.7;
 }
 
 .input-area {
@@ -179,32 +199,6 @@ button:hover {
   color: #000;
 }
 
-/* Mobile Responsive */
-@media screen and (max-width: 600px) {
-  .chat-box {
-    max-height: 50vh;
-    font-size: 0.85rem;
-  }
-
-  .message-content {
-    font-size: 0.85rem;
-    max-width: 90%;
-  }
-
-  .input-area {
-    flex-direction: column;
-  }
-
-  textarea {
-    width: 100%;
-  }
-
-  button {
-    width: 100%;
-  }
-}
-
-
 .footer {
   display: flex;
   justify-content: center;
@@ -223,4 +217,173 @@ button:hover {
   height: 28px;
   width: auto;
   opacity: 0.9;
+}
+
+/* Upload styles */
+.upload-box {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.95rem;
+  padding: 1rem;
+  border: 1px dashed var(--border-color, #ccc);
+  border-radius: 8px;
+  background: var(--background-alt, #f9f9f9);
+}
+
+.custom-upload {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  background-color: #49d49d;
+  color: white;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.custom-upload:hover, .custom-upload:focus {
+  background-color: #36b37e;
+  color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(52, 199, 89, 0.15);
+}
+
+body.dark .custom-upload:hover, body.dark .custom-upload:focus {
+  background-color: #218c6a;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(42, 122, 94, 0.18);
+}
+
+.file-preview {
+  margin: 1rem auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.file-chip {
+  background-color: #eee;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: #333;
+  white-space: nowrap;
+}
+
+.upload-confirm {
+  display: block;
+  margin: 1rem auto 0;
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #4caf50;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.upload-confirm:hover {
+  background-color: #3d9442;
+}
+
+.progress-wrapper {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.progress-bar {
+  height: 10px;
+  width: 80%;
+  margin: 0 auto;
+  background-color: #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #49d49d;
+  transition: width 0.3s ease-in-out;
+}
+
+.progress-label {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--text-color);
+}
+
+.upload-summary {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  text-align: center;
+}
+
+.error-file-list {
+  color: #e74c3c;
+  font-weight: 500;
+}
+
+/* Mobile Responsive */
+@media screen and (max-width: 600px) {
+  .chat-box {
+    max-height: 50vh;
+    font-size: 0.85rem;
+  }
+
+  .message-content {
+    font-size: 0.85rem;
+    max-width: 90%;
+  }
+
+  .input-area {
+    flex-direction: column;
+  }
+
+  textarea, button {
+    width: 100%;
+  }
+}
+
+body.dark .upload-box {
+  background: #232428;
+  border-color: #444;
+  color: var(--text-color);
+}
+
+body.dark .custom-upload {
+  background-color: #2a7a5e;
+  color: #fff;
+}
+
+body.dark .file-chip {
+  background-color: #333;
+  color: #f1f1f1;
+}
+
+body.dark .upload-confirm {
+  background-color: #388e3c;
+  color: #fff;
+}
+body.dark .upload-confirm:hover {
+  background-color: #2e7031;
+}
+
+body.dark .progress-bar {
+  background-color: #444;
+}
+
+body.dark .progress-fill {
+  background-color: #2a7a5e;
+}
+
+body.dark .upload-summary {
+  color: var(--text-color);
+}
+
+body.dark .error-file-list {
+  color: #ff7675;
 }

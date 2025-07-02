@@ -22,9 +22,11 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
   const [botTyping, setBotTyping] = useState("");
   const [suggestions, setSuggestions] = useState([]);
+  const [darkMode, setDarkMode] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const chatBoxRef = useRef(null);
 
   useEffect(() => {
@@ -45,7 +47,11 @@ function App() {
   const handleSend = async (customInput) => {
     const trimmed = (customInput ?? input).trim();
     if (!trimmed) return;
-    const userMessage = { role: "user", content: trimmed };
+    const userMessage = {
+      role: "user",
+      content: trimmed,
+      timestamp: new Date().toISOString()
+    };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setLoading(true);
@@ -60,14 +66,20 @@ function App() {
     setLoading(false);
   };
 
-  const simulateTyping = (fullText) => {
+  const simulateTyping = (text) => {
     let i = 0;
     const interval = setInterval(() => {
       i++;
-      setBotTyping(fullText.slice(0, i));
-      if (i >= fullText.length) {
+      setBotTyping(text.slice(0, i));
+      if (i >= text.length) {
         clearInterval(interval);
-        setMessages((prev) => [...prev, { role: "assistant", content: fullText }]);
+        setMessages((prev) => [...prev, 
+          {
+            role: "assistant",
+            content: text,
+            timestamp: new Date().toISOString()
+          }
+        ]);
         setBotTyping("");
       }
     }, 15);
@@ -78,6 +90,29 @@ function App() {
       e.preventDefault();
       handleSend();
     }
+  };
+
+  const handleFileChange = (e) => {
+    setSelectedFiles([...e.target.files]);
+    setUploadStatus("");
+  };
+
+  const handleUploadConfirm = async () => {
+    if (selectedFiles.length === 0) return;
+    setUploadStatus("⏳ Đang xử lý các file...");
+    for (let file of selectedFiles) {
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        const res = await axios.post("http://localhost:5678/upload", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        setUploadStatus((prev) => prev + `\n📄 ${file.name}: ${res.data.message}`);
+      } catch {
+        setUploadStatus((prev) => prev + `\n❌ ${file.name}: Lỗi xử lý.`);
+      }
+    }
+    setSelectedFiles([]);
   };
 
   return (
@@ -93,6 +128,10 @@ function App() {
       suggestions={suggestions}
       darkMode={darkMode}
       toggleDarkMode={() => setDarkMode(!darkMode)}
+      selectedFiles={selectedFiles}
+      handleFileChange={handleFileChange}
+      handleUploadConfirm={handleUploadConfirm}
+      uploadStatus={uploadStatus}
     />
   );
 }
