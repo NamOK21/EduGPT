@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from rag_query_sqlite import retrieve_context
 from docx import Document
@@ -14,7 +14,11 @@ import requests
 import pdfplumber
 from werkzeug.utils import secure_filename
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_folder="frontend/react-ui/build",
+    static_url_path="/"
+)
 CORS(app)
 
 DB_PATH = "db/vectors.db"
@@ -184,15 +188,22 @@ def convert_and_embed(file_path):
 ### XÂY DỰNG PROMPT VÀ GỌI MODEL
 ### ===============================
 
-def build_prompt(context_chunks, question):
-    context_text = "\n\n".join([f"[{i+1}] {chunk}" for i, chunk in enumerate(context_chunks)])
+def build_prompt(context_chunks, question, max_chars=3000):
+    context_text = ""
+    total_len = 0
+
+    for i, chunk in enumerate(context_chunks):
+        chunk_text = f"[{i+1}] {chunk.strip()}\n\n"
+        total_len += len(chunk_text)
+        if total_len > max_chars:
+            break
+        context_text += chunk_text
 
     system_instruction = (
         "Bạn là trợ lý giáo dục thông minh. "
-        "Hãy ưu tiên trả lời theo thông tin trong tài liệu dưới đây. "
-        "Nếu cần thiết, bạn có thể diễn giải hoặc suy luận nhẹ dựa trên ngữ cảnh, "
-        "nhưng phải đảm bảo không gây hiểu nhầm và không bịa đặt thông tin không có cơ sở. "
+        "Hãy ưu tiên trả lời theo thông tin trong tài liệu dưới đây."
         "Nếu tài liệu không cung cấp đủ dữ kiện, hãy nói rõ điều đó."
+        "Trả lời ngắn gọn, đúng trọng tâm và rõ ràng."
     )
 
     user_prompt = (
@@ -238,6 +249,16 @@ def query_lmstudio(user_msg, system_msg):
 ### ===============================
 ### API FLASK
 ### ===============================
+
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
+def serve_react(path):
+    static_dir = app.static_folder or "frontend/react-ui/build"  # đảm bảo luôn là string
+    file_path = os.path.join(static_dir, path)
+
+    if path and os.path.exists(file_path):
+        return send_from_directory(static_dir, path)
+    return send_from_directory(static_dir, "index.html")
 
 @app.route("/ask", methods=["POST"])
 def ask():

@@ -356,6 +356,9 @@ body.dark .custom-upload:hover, body.dark .custom-upload:focus {
 
   .input-area {
     flex-direction: column;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   textarea, button {

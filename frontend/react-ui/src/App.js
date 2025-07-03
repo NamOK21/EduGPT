@@ -66,29 +66,34 @@ function App() {
   // XỬ LÝ GỬI TIN NHẮN
   // =========================================
   const handleSend = async (customInput) => {
-    const trimmed = (customInput ?? input).trim();
+    const inputValue = (customInput !== undefined && customInput !== null)
+      ? customInput
+      : input;
+  
+    const trimmed = inputValue.trim();
     if (!trimmed) return;
-
+  
     const userMessage = {
       role: "user",
       content: trimmed,
       timestamp: new Date().toISOString(),
     };
-
+  
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setLoading(true);
     setBotTyping("⏳ Đang trả lời...");
-
+  
     try {
-      const res = await axios.post("http://localhost:5678/ask", { question: trimmed });
+      const res = await axios.post("/ask", { question: trimmed });
       simulateTyping(res.data.answer || "❌ Không có phản hồi.");
     } catch {
       simulateTyping("❌ Lỗi kết nối đến máy chủ.");
     }
-
+  
     setLoading(false);
   };
+  
 
   // =========================================
   // GIẢ LẬP GÕ TỪNG CHỮ

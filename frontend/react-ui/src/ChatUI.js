@@ -36,7 +36,7 @@ function ChatUI({
           <h1>🎓 Trợ lý giáo dục</h1>
           <div style={{ display: "flex", gap: "0.5rem" }}>
             <button className="theme-toggle" onClick={toggleDarkMode}>
-              {darkMode ? "🌞 Sáng" : "🌙 Tối"}
+              {darkMode ? "🌙 Tối" : "🌞 Sáng"}
             </button>
             <button className="clear-history-btn" onClick={handleClearHistory}>
               🗑️ Xoá lịch sử
