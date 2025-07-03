@@ -17,8 +17,6 @@ edugpt/Lib/site-packages/
 # Data 
 data/**
 
-# Upload file
-uploaded/
 
 
 # ===== Package installs =====
