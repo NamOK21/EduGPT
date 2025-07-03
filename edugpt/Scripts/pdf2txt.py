@@ -1,4 +1,4 @@
-#!D:\thieutanam\Codes\EduGPT\authen\Scripts\python.exe
+#!D:\thieutanam\Codes\EduGPT\edugpt\Scripts\python.exe
 """A command line tool for extracting text and images from PDF and
 output it to plain text, html, xml or tags.
 """

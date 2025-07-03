@@ -11,8 +11,8 @@ ENV/
 .VENV/
 
 # Windows venv site-packages 
-authen/Lib/
-authen/Lib/site-packages/
+edugpt/Lib/
+edugpt/Lib/site-packages/
 
 # Data 
 data/**

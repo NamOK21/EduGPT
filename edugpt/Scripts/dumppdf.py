@@ -1,4 +1,4 @@
-#!D:\thieutanam\Codes\EduGPT\authen\Scripts\python.exe
+#!D:\thieutanam\Codes\EduGPT\edugpt\Scripts\python.exe
 """Extract pdf structure in XML format"""
 
 import logging
