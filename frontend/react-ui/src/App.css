@@ -1,32 +1,39 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap');
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
 
 :root {
-  --bg-color: #f8f9fa;
-  --primary: #4D9DE0;
-  --secondary: #80CED7;
-  --highlight: #FFD166;
-  --text-color: #333;
-  --user-bubble: #E8F0FE;
-  --bot-bubble: #FFF3CD;
-  --suggested-bg: #e0f7fa;
-  --suggested-color: #006064;
+  --bg-color: #fdf6ec;
+  --primary: #b71c1c;
+  --secondary: #ffc107;
+  --highlight: #e53935;
+  --text-color: #222;
+  --user-bubble: #fce8e6;
+  --bot-bubble: #fff8e1;
+  --suggested-bg: #ffebee;
+  --suggested-color: #b71c1c;
 }
 
 body.dark {
-  --bg-color: #1d1e20;
-  --primary: #80CED7;
-  --secondary: #4D9DE0;
-  --highlight: #FFD166;
+  --bg-color: #1b1b1b;
+  --primary: #ff8a80;
+  --secondary: #ffe082;
+  --highlight: #ef5350;
   --text-color: #f1f1f1;
-  --user-bubble: #2a2b30;
-  --bot-bubble: #33362f;
-  --suggested-bg: #2b3e45;
-  --suggested-color: #a7f3f9;
+  --user-bubble: #2a2a2a;
+  --bot-bubble: #333333;
+  --suggested-bg: #2c2c2c;
+  --suggested-color: #ffcdd2;
 }
 
 body {
   margin: 0;
-  font-family: 'Quicksand', sans-serif;
+  font-family: 'Noto Sans', sans-serif;
   background: var(--bg-color);
   color: var(--text-color);
   transition: background 0.3s ease, color 0.3s ease;
@@ -41,14 +48,18 @@ body {
 }
 
 .header {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-family: 'Black Ops One', sans-serif;
+  font-size: 1.8rem;
   color: var(--primary);
-  margin-bottom: 1rem;
   text-align: center;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  margin-bottom: 1rem;
+}
+
+
+.header-icon {
+  height: 28px;
+  margin-right: 0.5rem;
+  vertical-align: middle;
 }
 
 .theme-toggle {
@@ -197,6 +208,16 @@ button:hover {
 .suggested-btn:hover {
   background-color: var(--highlight);
   color: #000;
+}
+
+.refresh-btn {
+  background-color: #ffe0b2;
+  color: #8b4500;
+  font-weight: bold;
+}
+
+.refresh-btn:hover {
+  background-color: #ffd699;
 }
 
 .footer {

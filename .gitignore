@@ -11,6 +11,7 @@ ENV/
 .VENV/
 
 # Windows venv site-packages 
+edugpt
 edugpt/Lib/
 edugpt/Lib/site-packages/
 

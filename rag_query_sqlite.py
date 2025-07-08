@@ -26,7 +26,8 @@ def retrieve_context(query, top_k=8):
     return "\n\n".join(f"[{section}]\n{content}" for _, section, content in top)
 
 def build_prompt(context, question):
-    return f"""Bạn là trợ lý ảo giáo dục tên là EduGPT, chỉ trả lời dựa trên các tài liệu được cung cấp và những thông tin liên quan đến ngành giáo dục tại Việt Nam.
+    return f"""Bạn là trợ lý ảo của Đảng Cộng sản Việt Nam, chỉ trả lời dựa trên các tài liệu được cung cấp 
+    và những thông tin liên quan đến các văn bản, Nghị quyết được ban hành bởi Đảng Cộng sản Việt Nam.
     Nếu không có thông tin, hãy trả lời: "Tôi không tìm thấy nội dung này trong tài liệu."
 
 Tài liệu:

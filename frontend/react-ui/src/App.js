@@ -7,18 +7,7 @@ import ChatUI from "./ChatUI";
 import "./App.css";
 
 const LOCAL_KEY = "edu-chat-history";
-const SUGGESTED_QUESTIONS = [
-  "Mục tiêu của chương trình giáo dục phổ thông là gì?",
-  "Môn Tiếng Anh ở cấp trung học cơ sở dạy gì?",
-  "Học sinh được đánh giá thế nào trong môn Giáo dục thể chất?",
-  "Môn Toán ở tiểu học gồm những nội dung gì?",
-  "Chương trình có chia giai đoạn giáo dục không?",
-  "Các môn học bắt buộc và tự chọn gồm những gì?",
-  "Giáo dục định hướng nghề nghiệp bắt đầu từ lớp mấy?",
-  "Yêu cầu cần đạt trong môn Lịch sử là gì?",
-  "Chương trình môn Địa lý giúp học sinh phát triển năng lực nào?",
-  "Nội dung giáo dục của địa phương được dạy như thế nào?",
-];
+
 
 // =========================================
 // COMPONENT CHÍNH APP
@@ -37,6 +26,10 @@ function App() {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploadProgress, setUploadProgress] = useState(0);
   const chatBoxRef = useRef(null);
+  const [lastQuestion, setLastQuestion] = useState("");
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+
+
 
   // =========================================
   // KHÔI PHỤC VÀ LƯU LỊCH SỬ
@@ -50,7 +43,8 @@ function App() {
         console.error("❌ Lỗi đọc lịch sử:", e);
       }
     }
-    setSuggestions([...SUGGESTED_QUESTIONS].sort(() => 0.5 - Math.random()).slice(0, 6));
+    setSuggestions([]);
+
   }, []);
 
   useEffect(() => {
@@ -82,11 +76,15 @@ function App() {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setLoading(true);
+    setLastQuestion(trimmed);
     setBotTyping("⏳ Đang trả lời...");
   
     try {
       const res = await axios.post("/ask", { question: trimmed });
-      simulateTyping(res.data.answer || "❌ Không có phản hồi.");
+    simulateTyping(res.data.answer || "❌ Không có phản hồi.");
+    setSuggestions((res.data.related_questions || []).slice(0, 6));
+
+
     } catch {
       simulateTyping("❌ Lỗi kết nối đến máy chủ.");
     }
@@ -179,9 +177,31 @@ function App() {
   const handleClearHistory = () => {
     if (window.confirm("Bạn có chắc muốn xoá toàn bộ lịch sử trò chuyện?")) {
       setMessages([]);
+      setSuggestions([]);     
+      setLastQuestion("");    
       localStorage.removeItem(LOCAL_KEY);
     }
   };
+  
+  const handleMoreSuggestions = async () => {
+    if (!lastQuestion) return;
+  
+    setSuggestions([]); // 👉 Xoá gợi ý cũ ngay lập tức
+    setLoadingSuggestions(true);
+  
+    try {
+      const res = await axios.post("/related_questions", { question: lastQuestion });
+      setSuggestions((res.data.related_questions || []).slice(0, 6));
+    } catch (err) {
+      console.error("❌ Lỗi gọi /related_questions:", err);
+    } finally {
+      setLoadingSuggestions(false);
+    }
+  };
+  
+  
+  
+  
 
   // =========================================
   // RENDER UI
@@ -209,6 +229,8 @@ function App() {
         uploadStatus={uploadStatus}
         uploadProgress={uploadProgress}
         handleClearHistory={handleClearHistory}
+        handleMoreSuggestions={handleMoreSuggestions}
+        loadingSuggestions={loadingSuggestions}
       />
     </>
   );

@@ -25,6 +25,9 @@ function ChatUI({
   uploadStatus,
   uploadProgress,
   handleClearHistory,
+  handleMoreSuggestions,
+  loadingSuggestions
+
 }) {
   return (
     <>
@@ -33,7 +36,10 @@ function ChatUI({
       {/* ========================================= */}
       <div className="app-container">
         <header className="header">
-          <h1>🎓 Trợ lý giáo dục</h1>
+          <h1 className="header">
+            <img src="/assets/dang.png" alt="Đảng" className="header-icon" />
+            AI ASSISTANT FOR THE COMMUNIST PARTY OF VIETNAM
+          </h1>
           <div style={{ display: "flex", gap: "0.5rem" }}>
             <button className="theme-toggle" onClick={toggleDarkMode}>
               {darkMode ? "🌙 Tối" : "🌞 Sáng"}
@@ -112,23 +118,57 @@ function ChatUI({
         {/* ========================================= */}
         {/* GỢI Ý CÂU HỎI */}
         {/* ========================================= */}
-        <div className="suggested-container">
-          <h3>💡 Câu hỏi gợi ý:</h3>
-          <div className="suggested-grid">
-            {suggestions.map((q, idx) => (
-              <motion.button
-                key={idx}
-                className="suggested-btn"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => handleSend(q)}
-                disabled={loading}
-              >
-                {q}
-              </motion.button>
-            ))}
+        {suggestions.length > 0 && (
+          <div className="suggested-container">
+          {suggestions.length > 0 && (
+            <>
+              <h3>💡 Câu hỏi gợi ý:</h3>
+              <div className="suggested-grid">
+                {suggestions.map((q, idx) => (
+                  <motion.button
+                    key={idx}
+                    className="suggested-btn"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleSend(q)}
+                    disabled={loading}
+                  >
+                    {q}
+                  </motion.button>
+                ))}
+              </div>
+            </>
+          )}
+        
+          <div style={{ textAlign: "center", marginTop: "10px" }}>
+            <motion.button
+              className="suggested-btn refresh-btn"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleMoreSuggestions}
+              disabled={loadingSuggestions}
+            >
+              {loadingSuggestions ? (
+                <span
+                  style={{
+                    display: "inline-block",
+                    width: "18px",
+                    height: "18px",
+                    border: "2px solid #ccc",
+                    borderTop: "2px solid #333",
+                    borderRadius: "50%",
+                    animation: "spin 1s linear infinite"
+                  }}
+                />
+              ) : (
+                "🔁 Tôi muốn hỏi thêm"
+              )}
+            </motion.button>
           </div>
         </div>
+        
+        
+        )}
 
         {/* ========================================= */}
         {/* UPLOAD FILE */}
@@ -137,7 +177,14 @@ function ChatUI({
           <h3>📎 Tải lên nhiều file (.pdf, .docx):</h3>
           <label className="custom-upload">
             + Chọn file
-            <input type="file" accept=".pdf,.docx,.lsty" multiple onChange={handleFileChange} disabled={loading} hidden />
+            <input
+              type="file"
+              accept=".pdf,.docx,.lsty"
+              multiple
+              onChange={handleFileChange}
+              disabled={loading}
+              hidden
+            />
           </label>
 
           {selectedFiles.length > 0 && (
@@ -173,7 +220,7 @@ function ChatUI({
       {/* FOOTER */}
       {/* ========================================= */}
       <footer className="footer">
-        <img src="/assets/sfb-logo.png" alt="SFB Logo" className="footer-logo" />
+        <img src="/assets/tmplogo.jpg" alt="SFB Logo" className="footer-logo" />
         <span>© {new Date().getFullYear()} EduGPT by SFB Technology. All rights reserved.</span>
       </footer>
     </>
