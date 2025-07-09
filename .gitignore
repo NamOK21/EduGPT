@@ -2,6 +2,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
+backend/__pycache__/
+backend/routes/__pycache__/
+backend/services/__pycache__/
 
 # ===== Virtual Environments =====
 venv/
@@ -16,10 +19,10 @@ edugpt/Lib/
 edugpt/Lib/site-packages/
 
 # Data 
-data/**
+backend/data/**
 
 # Upload file
-uploaded/
+backend/uploaded/
 
 
 # ===== Package installs =====
@@ -67,8 +70,8 @@ Thumbs.db
 *.onnx
 
 # ===== SQLite database files =====
-db/*.db
-db/*.sqlite
+backend/db/*.db
+backend/db/*.sqlite
 
 # ===== Others =====
 *.bak
