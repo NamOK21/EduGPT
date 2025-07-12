@@ -1,6 +1,3 @@
-// =========================================
-// IMPORT VÀ HẰNG SỐ
-// =========================================
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import ChatUI from "./ChatUI";
@@ -8,14 +5,7 @@ import "./App.css";
 
 const LOCAL_KEY = "edu-chat-history";
 
-
-// =========================================
-// COMPONENT CHÍNH APP
-// =========================================
 function App() {
-  // =========================================
-  // STATE VÀ BIẾN
-  // =========================================
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,11 +19,6 @@ function App() {
   const [lastQuestion, setLastQuestion] = useState("");
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
 
-
-
-  // =========================================
-  // KHÔI PHỤC VÀ LƯU LỊCH SỬ
-  // =========================================
   useEffect(() => {
     const stored = localStorage.getItem(LOCAL_KEY);
     if (stored) {
@@ -44,7 +29,6 @@ function App() {
       }
     }
     setSuggestions([]);
-
   }, []);
 
   useEffect(() => {
@@ -56,46 +40,34 @@ function App() {
     document.body.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
-  // =========================================
-  // XỬ LÝ GỬI TIN NHẮN
-  // =========================================
   const handleSend = async (customInput) => {
-    const inputValue = (customInput !== undefined && customInput !== null)
-      ? customInput
-      : input;
-  
+    const inputValue = customInput ?? input;
     const trimmed = inputValue.trim();
     if (!trimmed) return;
-  
+
     const userMessage = {
       role: "user",
       content: trimmed,
       timestamp: new Date().toISOString(),
     };
-  
+
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setLoading(true);
     setLastQuestion(trimmed);
     setBotTyping("⏳ Đang trả lời...");
-  
+
     try {
       const res = await axios.post("/ask", { question: trimmed });
-    simulateTyping(res.data.answer || "❌ Không có phản hồi.");
-    setSuggestions((res.data.related_questions || []).slice(0, 6));
-
-
+      simulateTyping(res.data.answer || "❌ Không có phản hồi.");
+      setSuggestions((res.data.related_questions || []).slice(0, 6));
     } catch {
       simulateTyping("❌ Lỗi kết nối đến máy chủ.");
     }
-  
+
     setLoading(false);
   };
-  
 
-  // =========================================
-  // GIẢ LẬP GÕ TỪNG CHỮ
-  // =========================================
   const simulateTyping = (text) => {
     let i = 0;
     const interval = setInterval(() => {
@@ -116,9 +88,6 @@ function App() {
     }, 15);
   };
 
-  // =========================================
-  // XỬ LÝ PHÍM ENTER
-  // =========================================
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -126,17 +95,11 @@ function App() {
     }
   };
 
-  // =========================================
-  // XỬ LÝ CHỌN FILE
-  // =========================================
-  const handleFileChange = (e) => {
-    setSelectedFiles([...e.target.files]);
+  const handleFileChange = (files) => {
+    setSelectedFiles(files);
     setUploadStatus({ total: 0, successCount: 0, errors: [] });
   };
 
-  // =========================================
-  // XỬ LÝ UPLOAD FILE
-  // =========================================
   const handleUploadConfirm = async () => {
     if (selectedFiles.length === 0) return;
     setUploadStatus({ total: selectedFiles.length, successCount: 0, errors: [] });
@@ -171,24 +134,21 @@ function App() {
     setSelectedFiles([]);
   };
 
-  // =========================================
-  // XÓA LỊCH SỬ CHAT
-  // =========================================
   const handleClearHistory = () => {
     if (window.confirm("Bạn có chắc muốn xoá toàn bộ lịch sử trò chuyện?")) {
       setMessages([]);
-      setSuggestions([]);     
-      setLastQuestion("");    
+      setSuggestions([]);
+      setLastQuestion("");
       localStorage.removeItem(LOCAL_KEY);
     }
   };
-  
+
   const handleMoreSuggestions = async () => {
     if (!lastQuestion) return;
-  
-    setSuggestions([]); // 👉 Xoá gợi ý cũ ngay lập tức
+
+    setSuggestions([]);
     setLoadingSuggestions(true);
-  
+
     try {
       const res = await axios.post("/related_questions", { question: lastQuestion });
       setSuggestions((res.data.related_questions || []).slice(0, 6));
@@ -198,41 +158,30 @@ function App() {
       setLoadingSuggestions(false);
     }
   };
-  
-  
-  
-  
 
-  // =========================================
-  // RENDER UI
-  // =========================================
   return (
-    <>
-      {/* ========================================= */}
-      {/* RENDER UI - Giao diện chính */}
-      {/* ========================================= */}
-      <ChatUI
-        messages={messages}
-        loading={loading}
-        botTyping={botTyping}
-        chatBoxRef={chatBoxRef}
-        input={input}
-        setInput={setInput}
-        handleSend={handleSend}
-        handleKeyDown={handleKeyDown}
-        suggestions={suggestions}
-        darkMode={darkMode}
-        toggleDarkMode={() => setDarkMode(!darkMode)}
-        selectedFiles={selectedFiles}
-        handleFileChange={handleFileChange}
-        handleUploadConfirm={handleUploadConfirm}
-        uploadStatus={uploadStatus}
-        uploadProgress={uploadProgress}
-        handleClearHistory={handleClearHistory}
-        handleMoreSuggestions={handleMoreSuggestions}
-        loadingSuggestions={loadingSuggestions}
-      />
-    </>
+    <ChatUI
+      messages={messages}
+      loading={loading}
+      botTyping={botTyping}
+      chatBoxRef={chatBoxRef}
+      input={input}
+      setInput={setInput}
+      handleSend={handleSend}
+      handleKeyDown={handleKeyDown}
+      suggestions={suggestions}
+      darkMode={darkMode}
+      toggleDarkMode={() => setDarkMode(!darkMode)}
+      selectedFiles={selectedFiles}
+      handleFileChange={handleFileChange}
+      handleUploadConfirm={handleUploadConfirm}
+      uploadStatus={uploadStatus}
+      uploadProgress={uploadProgress}
+      handleClearHistory={handleClearHistory}
+      handleMoreSuggestions={handleMoreSuggestions}
+      loadingSuggestions={loadingSuggestions}
+      setSelectedFiles={setSelectedFiles}
+    />
   );
 }
 

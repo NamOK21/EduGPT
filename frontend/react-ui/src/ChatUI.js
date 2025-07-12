@@ -1,12 +1,6 @@
-// =========================================
-// IMPORT
-// =========================================
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// =========================================
-// COMPONENT CHÍNH CHATUI
-// =========================================
 function ChatUI({
   messages,
   loading,
@@ -26,14 +20,11 @@ function ChatUI({
   uploadProgress,
   handleClearHistory,
   handleMoreSuggestions,
-  loadingSuggestions
-
+  loadingSuggestions,
+  setSelectedFiles,
 }) {
   return (
     <>
-      {/* ========================================= */}
-      {/* HEADER */}
-      {/* ========================================= */}
       <div className="app-container">
         <header className="header">
           <h1 className="header">
@@ -50,9 +41,6 @@ function ChatUI({
           </div>
         </header>
 
-        {/* ========================================= */}
-        {/* KHUNG CHAT */}
-        {/* ========================================= */}
         <div className="chat-box" ref={chatBoxRef}>
           <AnimatePresence initial={false}>
             {messages.map((msg, i) => {
@@ -66,9 +54,10 @@ function ChatUI({
                 <motion.div
                   key={i}
                   className={`chat-message ${isUser ? "user" : "assistant"}`}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
+                  initial={{ opacity: 0, y: isUser ? 20 : -20, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 >
                   <img
                     className="avatar-img"
@@ -87,9 +76,10 @@ function ChatUI({
               <motion.div
                 key="typing"
                 className="chat-message assistant"
-                initial={{ opacity: 0, y: 5 }}
+                initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
               >
                 <img className="avatar-img" src="/assets/bot-avatar.png" alt="avatar" />
                 <div className="bubble-group">
@@ -101,9 +91,6 @@ function ChatUI({
           </AnimatePresence>
         </div>
 
-        {/* ========================================= */}
-        {/* INPUT CHAT */}
-        {/* ========================================= */}
         <div className="input-area">
           <textarea
             placeholder="Nhập câu hỏi..."
@@ -115,110 +102,113 @@ function ChatUI({
           <button onClick={() => handleSend()} disabled={loading}>📤 Gửi</button>
         </div>
 
-        {/* ========================================= */}
-        {/* GỢI Ý CÂU HỎI */}
-        {/* ========================================= */}
         {suggestions.length > 0 && (
           <div className="suggested-container">
-          {suggestions.length > 0 && (
-            <>
-              <h3>💡 Câu hỏi gợi ý:</h3>
-              <div className="suggested-grid">
-                {suggestions.map((q, idx) => (
-                  <motion.button
-                    key={idx}
-                    className="suggested-btn"
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleSend(q)}
-                    disabled={loading}
-                  >
-                    {q}
-                  </motion.button>
-                ))}
-              </div>
-            </>
-          )}
-        
-          <div style={{ textAlign: "center", marginTop: "10px" }}>
-            <motion.button
-              className="suggested-btn refresh-btn"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleMoreSuggestions}
-              disabled={loadingSuggestions}
-            >
-              {loadingSuggestions ? (
-                <span
-                  style={{
-                    display: "inline-block",
-                    width: "18px",
-                    height: "18px",
-                    border: "2px solid #ccc",
-                    borderTop: "2px solid #333",
-                    borderRadius: "50%",
-                    animation: "spin 1s linear infinite"
-                  }}
-                />
-              ) : (
-                "🔁 Tôi muốn hỏi thêm"
-              )}
-            </motion.button>
+            <h3>💡 Câu hỏi gợi ý:</h3>
+            <div className="suggested-grid">
+              {suggestions.map((q, idx) => (
+                <motion.button
+                  key={idx}
+                  className="suggested-btn"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleSend(q)}
+                  disabled={loading}
+                >
+                  {q}
+                </motion.button>
+              ))}
+            </div>
+            <div style={{ textAlign: "center", marginTop: "10px" }}>
+              <motion.button
+                className="suggested-btn refresh-btn"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleMoreSuggestions}
+                disabled={loadingSuggestions}
+              >
+                {loadingSuggestions ? (
+                  <span
+                    style={{
+                      display: "inline-block",
+                      width: "18px",
+                      height: "18px",
+                      border: "2px solid #ccc",
+                      borderTop: "2px solid #333",
+                      borderRadius: "50%",
+                      animation: "spin 1s linear infinite",
+                    }}
+                  />
+                ) : (
+                  "🔁 Tôi muốn hỏi thêm"
+                )}
+              </motion.button>
+            </div>
           </div>
-        </div>
-        
-        
         )}
 
-        {/* ========================================= */}
         {/* UPLOAD FILE */}
-        {/* ========================================= */}
-        <div className="upload-box">
-          <h3>📎 Tải lên nhiều file (.pdf, .docx):</h3>
-          <label className="custom-upload">
-            + Chọn file
+        <div
+          className="upload-dropzone"
+          onDrop={(e) => {
+            e.preventDefault();
+            const droppedFiles = Array.from(e.dataTransfer.files);
+            handleFileChange(droppedFiles);
+          }}
+          onDragOver={(e) => e.preventDefault()}
+        >
+          <label className="upload-label">
+            📎 Kéo & thả file hoặc
             <input
               type="file"
-              accept=".pdf,.docx,.lsty"
               multiple
-              onChange={handleFileChange}
-              disabled={loading}
               hidden
+              onChange={(e) => handleFileChange(Array.from(e.target.files))}
             />
+            <span className="upload-button"> Chọn file</span>
           </label>
 
           {selectedFiles.length > 0 && (
-            <div className="file-preview">
+            <div className="file-preview-list">
               {selectedFiles.map((file, idx) => (
-                <div key={idx} className="file-chip">📄 {file.name}</div>
+                <div
+                  key={idx}
+                  className={`file-chip ${
+                    uploadStatus.errors.includes(file.name)
+                      ? "error"
+                      : uploadStatus.successCount > 0
+                      ? "success"
+                      : ""
+                  }`}
+                >
+                  📄 {file.name}
+                  {uploadStatus.errors.includes(file.name) && " ❌"}
+                  {!uploadStatus.errors.includes(file.name) &&
+                    uploadStatus.successCount > 0 &&
+                    " ✅"}
+                </div>
               ))}
-              <button className="upload-confirm" onClick={handleUploadConfirm}>✅ OK - Xử lý</button>
+              <div className="upload-actions">
+                <button onClick={handleUploadConfirm} className="upload-confirm">✅ Tải lên</button>
+                <button onClick={() => setSelectedFiles([])} className="clear-btn">🗑️ Xoá</button>
+              </div>
             </div>
           )}
 
           {uploadProgress > 0 && uploadProgress < 100 && (
             <div className="progress-wrapper">
               <div className="progress-bar">
-                <div className="progress-fill" style={{ width: `${uploadProgress}%` }}></div>
+                <div
+                  className="progress-fill"
+                  style={{ width: `${uploadProgress}%` }}
+                ></div>
               </div>
               <div className="progress-label">{uploadProgress}%</div>
-            </div>
-          )}
-
-          {uploadStatus.total > 0 && (
-            <div className="upload-summary">
-              <p>✅ Đã xử lý {uploadStatus.successCount}/{uploadStatus.total} file</p>
-              {uploadStatus.errors.length > 0 && (
-                <p>❌ Lỗi: <span className="error-file-list">{uploadStatus.errors.join(", ")}</span></p>
-              )}
             </div>
           )}
         </div>
       </div>
 
-      {/* ========================================= */}
-      {/* FOOTER */}
-      {/* ========================================= */}
       <footer className="footer">
         <img src="/assets/tmplogo.jpg" alt="SFB Logo" className="footer-logo" />
         <span>© {new Date().getFullYear()} EduGPT by SFB Technology. All rights reserved.</span>
