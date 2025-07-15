@@ -211,7 +211,7 @@ function ChatUI({
 
       <footer className="footer">
         <img src="/assets/tmplogo.jpg" alt="SFB Logo" className="footer-logo" />
-        <span>© {new Date().getFullYear()} EduGPT by SFB Technology. All rights reserved.</span>
+        <span>© {new Date().getFullYear()}. All rights reserved.</span>
       </footer>
     </>
   );

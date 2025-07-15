@@ -3,16 +3,29 @@ import os
 import json
 import sqlite3
 import numpy as np
-from config import model, DB_PATH
-from services.processing import clean_text, chunk_text, extract_pdf_text, extract_described_tables, process_docx
+from sentence_transformers import SentenceTransformer
+from config import DB_PATH
+from services.processing import clean_text, chunk_text, extract_pdf_text, extract_described_tables, process_docx, extract_sections
 
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
+def infer_category_from_filename(filename: str) -> str:
+    name = filename.lower()
+    if "nghi_quyet" in name:
+        return "Nghị quyết"
+    elif "thong_tu" in name:
+        return "Thông tư"
+    elif "vb" in name or "vanban" in name:
+        return "Văn bản"
+    else:
+        return "Khác"
 
 def convert_and_embed(file_path):
     ext = Path(file_path).suffix.lower()
     filename = Path(file_path).name
-    records = []
+    category = infer_category_from_filename(filename)
 
-    # Extract content như cũ
+    # === Trích xuất nội dung ===
     if ext == ".pdf":
         text = extract_pdf_text(file_path)
         records = extract_sections(text)
@@ -28,17 +41,17 @@ def convert_and_embed(file_path):
     else:
         raise ValueError("Chỉ hỗ trợ PDF hoặc DOCX.")
 
-    # Ghi JSON như cũ
+    # === Lưu bản sao JSON để debug nếu cần ===
     os.makedirs("data", exist_ok=True)
     json_path = f"data/{Path(file_path).stem}.json"
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(records, f, ensure_ascii=False, indent=2)
 
-    # === NHÚNG HÀNG LOẠT ===
+    # === Vector hóa toàn bộ ===
     contents = [r["content"] for r in records]
     vectors = model.encode(contents, batch_size=32, show_progress_bar=True)
 
-    # Lưu vào SQLite
+    # === Ghi vào SQLite ===
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     cur.execute("""
@@ -55,12 +68,15 @@ def convert_and_embed(file_path):
     """)
 
     for r, vec in zip(records, vectors):
+        # Ghi log kiểm tra
+        print(f"[{r.get('section', '')}] {r.get('subsection', '')}: {r['content'][:60]}...")
+
         cur.execute("""
             INSERT INTO chunks (file, category, section, subsection, type, content, vector)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (
             filename,
-            None,
+            category,
             r.get("section", ""),
             r.get("subsection", ""),
             r.get("type", "text"),
@@ -70,35 +86,5 @@ def convert_and_embed(file_path):
 
     conn.commit()
     conn.close()
+    print(f"✅ Đã xử lý {len(records)} đoạn từ file {filename}")
     return len(records)
-
-
-def extract_sections(text):
-    text = clean_text(text)
-    import re
-    pattern = re.compile(r'(?:^|\n)([IVXLCDM]{1,3}\.?\s+[^\n]{4,50})\s')
-    matches = list(pattern.finditer(text))
-
-    if not matches:
-        chunks = chunk_text(text)
-        return [{
-            "section": "Toàn văn",
-            "subsection": f"Đoạn {i+1}",
-            "type": "text",
-            "content": chunk
-        } for i, chunk in enumerate(chunks)]
-
-    sections = []
-    for i, match in enumerate(matches):
-        start = match.end()
-        end = matches[i+1].start() if i + 1 < len(matches) else len(text)
-        title = match.group(1).strip()
-        body = text[start:end].strip()
-        for j, chunk in enumerate(chunk_text(body)):
-            sections.append({
-                "section": title,
-                "subsection": f"Đoạn {j+1}",
-                "type": "text",
-                "content": chunk
-            })
-    return sections

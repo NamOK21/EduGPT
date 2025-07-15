@@ -1,40 +1,37 @@
 import sqlite3
 import numpy as np
-from sentence_transformers import SentenceTransformer
-
-model = SentenceTransformer("all-MiniLM-L6-v2")
+from config import DB_PATH, model
 
 def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
-def retrieve_context(query, top_k=8):
-    conn = sqlite3.connect("db/vectors.db")
+def retrieve_context(question, top_k=12):
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
-    q_vec = model.encode(query).astype(np.float32)
-    cur.execute("SELECT section, content, vector FROM chunks")
+    q_vec = model.encode(question, convert_to_numpy=True).astype(np.float32)
+    cur.execute("SELECT section, type, content, vector FROM chunks")
     rows = cur.fetchall()
     conn.close()
 
     results = []
-    for section, content, vec_bytes in rows:
+    for section, typ, content, vec_bytes in rows:
         vec = np.frombuffer(vec_bytes, dtype=np.float32)
         sim = cosine_similarity(q_vec, vec)
-        results.append((sim, section, content))
+        results.append((sim, section, typ, content))
 
-    top = sorted(results, key=lambda x: -x[0])[:top_k]
-    return "\n\n".join(f"[{section}]\n{content}" for _, section, content in top)
+    results.sort(key=lambda x: -x[0])
+    top = results[:top_k]
 
-def build_prompt(context, question):
-    return f"""Bạn là trợ lý ảo của Đảng Cộng sản Việt Nam, chỉ trả lời dựa trên các tài liệu được cung cấp 
-    và những thông tin liên quan đến các văn bản, Nghị quyết được ban hành bởi Đảng Cộng sản Việt Nam.
-    Hãy trả lời ngắn gọn, chính xác, đúng trọng tâm, đồng thời đưa các dẫn chứng cụ thể từ tài liệu nếu có.
-    Nếu không có thông tin, hãy trả lời: "Tôi không tìm thấy nội dung này trong tài liệu."
+    top_filtered = [r for r in top if r[0] > 0.05]
 
-Tài liệu:
-{context}
+    if not top_filtered:
+        print("[⚠️] Không tìm thấy đoạn nào có độ tương đồng đủ cao.")
+        return ["[!] Không có đoạn tài liệu nào gần với câu hỏi."]
+    
+    print(f"[DEBUG] Tổng số đoạn lấy từ DB: {len(rows)}")
+    print("=== Các đoạn có độ tương đồng > 0.05:")
+    for sim, sec, typ, cont in top_filtered:
+        print(f"[SIM {sim:.3f}] [{sec} - {typ}] {cont[:60].strip()}...")
 
-Câu hỏi:
-{question}
-
-Trả lời chi tiết:"""
+    return [r[3] for r in top_filtered]

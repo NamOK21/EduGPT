@@ -5,8 +5,15 @@ related_bp = Blueprint("related", __name__)
 
 @related_bp.route("/related_questions", methods=["POST"])
 def related_questions():
-    data = request.get_json()
-    question = data.get("question", "").strip()
-    if not question:
-        return jsonify({"related_questions": []})
-    return jsonify({"related_questions": generate_related_questions(question)})
+    print("✅ [Flask] Đã nhận được request /related_questions", flush=True)
+    try:
+        data = request.get_json(force=True)  # thêm force để ép đọc
+        print("❓ Question nhận vào:", data.get("question"), flush=True)
+        question = data.get("question", "").strip()
+        if not question:
+            return jsonify({"related_questions": []})
+        suggestions = generate_related_questions(question)
+        return jsonify({"related_questions": suggestions})
+    except Exception as e:
+        print("[ERROR - /related_questions]:", str(e))
+        return jsonify({"related_questions": [], "error": str(e)}), 500

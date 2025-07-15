@@ -145,12 +145,20 @@ function App() {
 
   const handleMoreSuggestions = async () => {
     if (!lastQuestion) return;
-
+  
     setSuggestions([]);
     setLoadingSuggestions(true);
-
+  
     try {
-      const res = await axios.post("/related_questions", { question: lastQuestion });
+      const res = await axios.post(
+        "/related_questions",
+        { question: lastQuestion },
+        {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
       setSuggestions((res.data.related_questions || []).slice(0, 6));
     } catch (err) {
       console.error("❌ Lỗi gọi /related_questions:", err);
@@ -158,6 +166,7 @@ function App() {
       setLoadingSuggestions(false);
     }
   };
+  
 
   return (
     <ChatUI
